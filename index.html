@@ -1,86 +1,73 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sufian Ahmad — Mobile Developer</title>
-  <meta name="description" content="Mobile developer. Creator of Merge 5 — the 5×5 sliding number puzzle." />
+
+  <title>SufHive Apps</title>
+
+<meta
+ name="description"
+ content="Official home of SufHive apps. Creator of Merge 5 and GifDrop."
+/>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:        #06071C;
-      --surface:   #0C0E2E;
-      --surface2:  #14163E;
-      --cyan:      #63CFF8;
-      --purple:    #9B6CF5;
-      --text:      #DDE2FF;
-      --muted:     #8A94CC;
-      --border:    rgba(255,255,255,0.07);
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html { scroll-behavior: smooth; }
+    :root {
+      --bg: #06071C;
+      --surface: #0C0E2E;
+      --cyan: #63CFF8;
+      --purple: #9B6CF5;
+      --text: #DDE2FF;
+      --muted: #8A94CC;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       min-height: 100vh;
       background: var(--bg);
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
-      -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Ambient glows ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 55% 45% at 8%  15%, rgba(99,207,248,0.07)  0%, transparent 70%),
-        radial-gradient(ellipse 50% 45% at 92% 88%, rgba(155,108,245,0.09) 0%, transparent 70%);
+        radial-gradient(
+          ellipse 55% 45% at 8% 15%,
+          rgba(99,207,248,0.07) 0%,
+          transparent 70%
+        ),
+        radial-gradient(
+          ellipse 50% 45% at 92% 88%,
+          rgba(155,108,245,0.09) 0%,
+          transparent 70%
+        );
       pointer-events: none;
-      z-index: 0;
     }
 
-    /* ── Signature: decorative 5×5 tile grid ── */
-    .tile-grid {
-      position: fixed;
-      top: -48px;
-      right: -48px;
-      display: grid;
-      grid-template-columns: repeat(5, 52px);
-      grid-template-rows:    repeat(5, 52px);
-      gap: 5px;
-      transform: rotate(14deg);
-      opacity: 0.055;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .tc { border-radius: 8px; background: var(--cyan); }
-    .tc:nth-child(3n+1) { background: var(--purple); }
-    .tc:nth-child(5n+2) { background: rgba(99,207,248,0.6); }
-    .tc:nth-child(7n+3) { background: rgba(155,108,245,0.6); }
-
-    /* mirror grid bottom-left */
-    .tile-grid-bl {
-      position: fixed;
-      bottom: -48px;
-      left: -48px;
-      display: grid;
-      grid-template-columns: repeat(5, 52px);
-      grid-template-rows:    repeat(5, 52px);
-      gap: 5px;
-      transform: rotate(-14deg);
-      opacity: 0.04;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── Layout ── */
     .page {
       position: relative;
       z-index: 1;
@@ -88,265 +75,258 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 60px 20px 48px;
-      gap: 0;
+      padding: 80px 20px 60px;
     }
 
-    /* ── Hero ── */
-    .hero { text-align: center; margin-bottom: 52px; }
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
 
     .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
       font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
+      letter-spacing: .14em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 18px;
-    }
-    .eyebrow::before,
-    .eyebrow::after {
-      content: '';
-      display: block;
-      width: 28px;
-      height: 1px;
-      background: rgba(138,148,204,0.35);
+      margin-bottom: 16px;
     }
 
     h1 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2.6rem, 7vw, 4.2rem);
-      font-weight: 700;
-      letter-spacing: -0.035em;
-      line-height: 1.08;
-      background: linear-gradient(130deg, var(--cyan) 0%, var(--text) 45%, var(--purple) 100%);
+      font-size: clamp(3rem, 7vw, 4.5rem);
+      line-height: 1.05;
+      background: linear-gradient(
+        130deg,
+        var(--cyan) 0%,
+        var(--text) 45%,
+        var(--purple) 100%
+      );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
 
     .tagline {
       margin-top: 14px;
-      font-size: 1.05rem;
       color: var(--muted);
-      font-weight: 300;
-      letter-spacing: 0.01em;
+      font-size: 1.05rem;
     }
 
-    /* ── App card ── */
-    .app-card {
+    .apps-grid {
       width: 100%;
-      max-width: 440px;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 24px;
+    }
+
+    .app-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 22px;
+      border-radius: 24px;
       padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 22px;
-      box-shadow: 0 0 0 1px rgba(99,207,248,0.04), 0 24px 64px rgba(0,0,0,0.4);
+      gap: 20px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.35);
     }
 
-    .app-header { display: flex; align-items: center; gap: 18px; }
+    .app-header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
 
     .app-icon {
-      width: 68px;
-      height: 68px;
-      flex-shrink: 0;
+      width: 70px;
+      height: 70px;
       border-radius: 18px;
-      background: linear-gradient(140deg, #63CFF8 0%, #7B6CF5 60%, #9B6CF5 100%);
+      background: linear-gradient(
+        140deg,
+        #63CFF8 0%,
+        #7B6CF5 60%,
+        #9B6CF5 100%
+      );
       display: flex;
       align-items: center;
       justify-content: center;
+      color: white;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.2rem;
       font-weight: 700;
-      color: #fff;
-      box-shadow:
-        0 0 20px rgba(99,207,248,0.30),
-        0 0 48px rgba(155,108,245,0.18);
+      font-size: 1.6rem;
     }
 
     .app-info h2 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.025em;
-    }
-    .app-info p {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 3px;
+      margin-bottom: 4px;
     }
 
-    /* ── Chips ── */
-    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .app-info p {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
     .chip {
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 5px 12px;
-      border-radius: 99px;
-      border: 1px solid rgba(99,207,248,0.22);
-      background: rgba(99,207,248,0.07);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: .75rem;
       color: var(--cyan);
+      border: 1px solid rgba(99,207,248,.25);
+      background: rgba(99,207,248,.07);
     }
 
-    /* ── Play button ── */
     .play-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 15px 22px;
-      border-radius: 14px;
-      background: linear-gradient(130deg, #63CFF8 0%, #9B6CF5 100%);
-      color: #06071C;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 600;
-      font-size: 0.92rem;
       text-decoration: none;
-      letter-spacing: -0.01em;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-    }
-    .play-btn:hover  { opacity: 0.88; transform: translateY(-2px); }
-    .play-btn:active { opacity: 1;    transform: translateY(0); }
-
-    .play-btn svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
-
-    /* ── Divider ── */
-    .divider {
-      width: 100%;
-      max-width: 440px;
-      height: 1px;
-      background: var(--border);
-      margin: 28px 0;
+      color: #06071C;
+      font-weight: 600;
+      text-align: center;
+      padding: 14px;
+      border-radius: 14px;
+      background: linear-gradient(
+        130deg,
+        #63CFF8 0%,
+        #9B6CF5 100%
+      );
     }
 
-    /* ── Links row ── */
     .links {
+      margin-top: 50px;
       display: flex;
       gap: 24px;
-      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    .link {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 0.82rem;
+    .links a {
       color: var(--muted);
       text-decoration: none;
-      transition: color 0.15s;
     }
-    .link:hover { color: var(--text); }
-    .link svg { width: 16px; height: 16px; fill: currentColor; opacity: 0.7; }
 
-    /* ── Footer ── */
+    .links a:hover {
+      color: var(--text);
+    }
+
     footer {
-      margin-top: 44px;
-      font-size: 0.72rem;
+      margin-top: 40px;
       color: var(--muted);
-      opacity: 0.45;
+      opacity: .6;
+      font-size: .8rem;
       text-align: center;
-      letter-spacing: 0.02em;
     }
 
     @media (max-width: 480px) {
-      .tile-grid, .tile-grid-bl { display: none; }
-      .app-card { border-radius: 18px; padding: 22px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .play-btn { transition: none; }
+      .apps-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
+
 </head>
+
 <body>
 
-  <!-- Decorative tile grids (signature element) -->
-  <div class="tile-grid" aria-hidden="true">
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-  </div>
-  <div class="tile-grid-bl" aria-hidden="true">
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-    <div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div><div class="tc"></div>
-  </div>
+<div class="page">
 
-  <div class="page">
+  <div class="hero">
+    <div class="eyebrow">Independent App Studio</div>
 
-    <!-- Hero -->
-    <div class="hero">
-      <div class="eyebrow">Mobile Developer</div>
-      <h1>SufHive</h1>
-      <p class="tagline">Building games people can't put down</p>
-    </div>
+```
+<h1>SufHive</h1>
 
-    <!-- App card -->
-    <div class="app-card">
-      <div class="app-header">
-        <div class="app-icon">5</div>
-        <div class="app-info">
-          <h2>Merge 5</h2>
-          <p>2048 Number Puzzle</p>
-        </div>
-      </div>
-
-      <div class="chips">
-        <span class="chip">5×5 board</span>
-        <span class="chip">Daily challenge</span>
-        <span class="chip">Free &amp; offline</span>
-      </div>
-
-      <!-- ✏️ Replace the href with your actual Play Store URL -->
-      <a
-        href="https://play.google.com/store/apps/details?id=com.sufhive.merge5"
-        class="play-btn"
-        target="_blank"
-        rel="noopener"
-      >
-        <!-- Google Play triangle icon -->
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M3.18 23.76c.3.17.64.24.99.2l12.45-11.7-3.85-3.86zM20.67 13.56 17.5 11.96l-3.52 3.3 3.52 3.3 3.19-1.62c.91-.46.91-1.72-.02-2.18zM3 1.27C2.7 1.57 2.52 2.04 2.52 2.64v18.74c0 .6.18 1.07.48 1.37l.07.07 10.5-9.86v-.23zm9.77 9.08L3.18.28c-.35-.04-.7.03-1 .2L12.77 15.6z"/>
-        </svg>
-        Get it on Google Play
-      </a>
-    </div>
-
-    <div class="divider" role="separator"></div>
-
-    <!-- Links -->
-    <div class="links">
-      <a href="https://github.com/sufian1999" class="link" target="_blank" rel="noopener" aria-label="GitHub profile">
-        <!-- GitHub icon -->
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.48.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.65.25 2.87.12 3.17.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 22.3 24 17.8 24 12.5 24 5.87 18.63.5 12 .5z"/>
-        </svg>
-        sufian1999
-      </a>
-
-      <a href="mailto:workplaceyou@gmail.com" class="link" aria-label="Email">
-        <!-- Envelope icon -->
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
-        </svg>
-        Contact
-      </a>
-    </div>
-
-    <footer>© 2025 Sufian Ahmad</footer>
+<p class="tagline">
+  Building simple, fast and privacy-focused mobile apps.
+</p>
+```
 
   </div>
+
+  <div class="apps-grid">
+
+```
+<!-- Merge 5 -->
+
+<div class="app-card">
+
+  <div class="app-header">
+    <div class="app-icon">5</div>
+
+    <div class="app-info">
+      <h2>Merge 5</h2>
+      <p>2048 Number Puzzle</p>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chip">5×5 Board</span>
+    <span class="chip">Daily Challenge</span>
+    <span class="chip">Offline</span>
+  </div>
+
+  <a
+    href="https://play.google.com/store/apps/details?id=com.sufhive.merge5"
+    target="_blank"
+    class="play-btn"
+  >
+    Get it on Google Play
+  </a>
+
+</div>
+
+<!-- GifDrop -->
+
+<div class="app-card">
+
+  <div class="app-header">
+    <div class="app-icon">GIF</div>
+
+    <div class="app-info">
+      <h2>GifDrop</h2>
+      <p>Video to GIF Maker</p>
+    </div>
+  </div>
+
+  <div class="chips">
+    <span class="chip">No Watermark</span>
+    <span class="chip">Offline</span>
+    <span class="chip">Fast Conversion</span>
+  </div>
+
+  <a
+    href="#"
+    target="_blank"
+    class="play-btn"
+  >
+    Coming Soon
+  </a>
+
+</div>
+```
+
+  </div>
+
+  <div class="links">
+    <a href="https://github.com/sufian1999" target="_blank">
+      GitHub
+    </a>
+
+```
+<a href="mailto:workplaceyou@gmail.com">
+  Contact
+</a>
+```
+
+  </div>
+
+  <footer>
+    © 2026 SufHive · Built by Sufian Ahmad
+  </footer>
+
+</div>
+
 </body>
 </html>

@@ -1,332 +1,451 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SufHive — Independent App Studio</title>
+<meta name="description" content="SufHive is an independent app studio by Sufian Ahmad. Maker of Merge 5, a 2048 number puzzle, and GifDrop, a video-to-GIF maker." />
+<meta name="theme-color" content="#05060f" />
 
-  <title>SufHive Apps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
-<meta
- name="description"
- content="Official home of SufHive apps. Creator of Merge 5 and GifDrop."
-/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  :root {
+    --void: #05060f;
+    --deep: #0a0c20;
+    --surface: #0f1238;
+    --surface-hi: #161a4c;
+    --line: rgba(255,255,255,0.08);
+    --line-hi: rgba(120,150,255,0.28);
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap"
-    rel="stylesheet"
-  />
+    --cyan: #3ad7e6;
+    --blue: #5180f0;
+    --violet: #8b5cf6;
+    --magenta: #e25ec8;
 
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    --text: #e7eaff;
+    --muted: #8b94cc;
+    --faint: #5b628f;
 
-    :root {
-      --bg: #06071C;
-      --surface: #0C0E2E;
-      --cyan: #63CFF8;
-      --purple: #9B6CF5;
-      --text: #DDE2FF;
-      --muted: #8A94CC;
-      --border: rgba(255,255,255,0.07);
-    }
+    --grad: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 38%, var(--violet) 70%, var(--magenta) 100%);
+    --display: 'Bricolage Grotesque', 'Sora', system-ui, sans-serif;
+    --body: 'DM Sans', system-ui, sans-serif;
+    --mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+  }
 
-    html {
-      scroll-behavior: smooth;
-    }
+  html { scroll-behavior: smooth; }
 
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
+  body {
+    min-height: 100vh;
+    background: var(--void);
+    color: var(--text);
+    font-family: var(--body);
+    line-height: 1.55;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(
-          ellipse 55% 45% at 8% 15%,
-          rgba(99,207,248,0.07) 0%,
-          transparent 70%
-        ),
-        radial-gradient(
-          ellipse 50% 45% at 92% 88%,
-          rgba(155,108,245,0.09) 0%,
-          transparent 70%
-        );
-      pointer-events: none;
-    }
+  /* ambient atmosphere */
+  .atmosphere {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 50% 40% at 12% 8%, rgba(58,215,230,0.10), transparent 65%),
+      radial-gradient(ellipse 55% 45% at 88% 92%, rgba(226,94,200,0.10), transparent 65%),
+      radial-gradient(ellipse 60% 50% at 50% 50%, rgba(81,128,240,0.05), transparent 70%);
+  }
 
-    .page {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 80px 20px 60px;
-    }
+  /* signature: faint living 5x5 board behind the hero */
+  .board {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(560px, 86vw);
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(8px, 1.6vw, 14px);
+    z-index: 0;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .board span {
+    border-radius: clamp(6px, 1.4vw, 12px);
+    background: rgba(255,255,255,0.022);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+  }
+  .board span.lit {
+    background: var(--grad);
+    box-shadow: 0 0 28px 2px rgba(99,140,250,0.35);
+    animation: glow 7s ease-in-out infinite;
+  }
+  .board span.c1 { background: linear-gradient(135deg, var(--cyan), var(--blue)); animation-delay: 0s; }
+  .board span.c2 { background: linear-gradient(135deg, var(--blue), var(--violet)); animation-delay: 1.4s; }
+  .board span.c3 { background: linear-gradient(135deg, var(--violet), var(--magenta)); animation-delay: 2.8s; }
+  .board span.c4 { background: linear-gradient(135deg, var(--cyan), var(--violet)); animation-delay: 4.2s; }
 
-    .hero {
-      text-align: center;
-      margin-bottom: 60px;
-    }
+  @keyframes glow {
+    0%, 100% { opacity: 0.32; filter: saturate(0.8); }
+    50%      { opacity: 0.95; filter: saturate(1.2); }
+  }
 
-    .eyebrow {
-      font-size: 11px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
+  /* layout shell */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 24px clamp(20px, 5vw, 40px) 56px;
+  }
 
-    h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(3rem, 7vw, 4.5rem);
-      line-height: 1.05;
-      background: linear-gradient(
-        130deg,
-        var(--cyan) 0%,
-        var(--text) 45%,
-        var(--purple) 100%
-      );
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0 0;
+  }
+  .brand {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .brand .dot {
+    width: 11px; height: 11px; border-radius: 3px;
+    background: var(--grad);
+    box-shadow: 0 0 12px rgba(99,140,250,0.6);
+  }
+  .topbar a.ghost {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    transition: color .2s, border-color .2s;
+  }
+  .topbar a.ghost:hover { color: var(--text); border-color: var(--line-hi); }
 
-    .tagline {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 1.05rem;
-    }
+  /* hero */
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: clamp(64px, 13vw, 130px) 0 clamp(48px, 9vw, 92px);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 22px;
+  }
+  .wordmark {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(3.6rem, 12vw, 7rem);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .tagline {
+    margin: 22px auto 0;
+    max-width: 30ch;
+    color: var(--muted);
+    font-size: clamp(1rem, 2.3vw, 1.18rem);
+    font-weight: 300;
+  }
+  .meta {
+    margin-top: 26px;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+  }
+  .meta b { color: var(--muted); font-weight: 700; }
 
-    .apps-grid {
-      width: 100%;
-      max-width: 980px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 24px;
-    }
+  /* apps */
+  .apps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 22px;
+  }
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--deep) 100%);
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    padding: 28px 26px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    overflow: hidden;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .35s;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--grad);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity .35s;
+    pointer-events: none;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.45);
+  }
+  .card:hover::before { opacity: 0.7; }
 
-    .app-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 0 24px 64px rgba(0,0,0,.35);
-    }
+  .card-head { display: flex; align-items: center; gap: 16px; }
+  .appicon {
+    width: 64px; height: 64px;
+    border-radius: 17px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .appicon.m5 {
+    background: linear-gradient(140deg, var(--cyan) 0%, var(--blue) 45%, var(--violet) 72%, var(--magenta) 100%);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 2rem;
+  }
+  .appicon.gd {
+    background: linear-gradient(140deg, var(--cyan) 0%, var(--blue) 60%, var(--violet) 100%);
+  }
+  .appicon.gd svg { width: 30px; height: 30px; margin-left: 3px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
 
-    .app-header {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-    }
+  .card-title { font-family: var(--display); font-weight: 700; font-size: 1.45rem; letter-spacing: -0.01em; }
+  .card-sub { color: var(--muted); font-size: 0.92rem; margin-top: 2px; }
 
-    .app-icon {
-      width: 70px;
-      height: 70px;
-      border-radius: 18px;
-      background: linear-gradient(
-        140deg,
-        #63CFF8 0%,
-        #7B6CF5 60%,
-        #9B6CF5 100%
-      );
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 1.6rem;
-    }
+  .desc { color: var(--muted); font-size: 0.95rem; font-weight: 300; }
 
-    .app-info h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      margin-bottom: 4px;
-    }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: -4px; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    color: var(--cyan);
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(58,215,230,0.22);
+    background: rgba(58,215,230,0.06);
+  }
 
-    .app-info p {
-      color: var(--muted);
-      font-size: .9rem;
-    }
+  .cta { margin-top: auto; }
+  .btn-play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #06071c;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 0.98rem;
+    padding: 15px;
+    border-radius: 15px;
+    background: var(--grad);
+    transition: filter .25s, transform .25s;
+  }
+  .btn-play:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-play svg { width: 18px; height: 18px; }
+  .btn-soon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px dashed var(--line-hi);
+    background: rgba(255,255,255,0.015);
+  }
+  .btn-soon .pulse {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    animation: blink 2.2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
 
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+  .card-legal {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-legal a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .card-legal a:hover { color: var(--cyan); }
+  .card-legal span { color: rgba(255,255,255,0.16); }
 
-    .chip {
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: .75rem;
-      color: var(--cyan);
-      border: 1px solid rgba(99,207,248,.25);
-      background: rgba(99,207,248,.07);
-    }
+  /* footer */
+  .foot {
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+    text-align: center;
+  }
+  .foot-row { display: flex; flex-wrap: wrap; gap: 20px 26px; justify-content: center; }
+  .foot a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.86rem;
+    transition: color .2s;
+  }
+  .foot a:hover { color: var(--text); }
+  .foot .legal a { font-family: var(--mono); font-size: 0.72rem; color: var(--faint); }
+  .foot .legal a:hover { color: var(--muted); }
+  .copyright { font-family: var(--mono); font-size: 0.72rem; color: var(--faint); letter-spacing: 0.04em; }
 
-    .play-btn {
-      text-decoration: none;
-      color: #06071C;
-      font-weight: 600;
-      text-align: center;
-      padding: 14px;
-      border-radius: 14px;
-      background: linear-gradient(
-        130deg,
-        #63CFF8 0%,
-        #9B6CF5 100%
-      );
-    }
+  /* entrance */
+  .reveal { opacity: 0; transform: translateY(18px); animation: rise .9s cubic-bezier(.2,.8,.2,1) forwards; }
+  .d1 { animation-delay: .05s; }
+  .d2 { animation-delay: .16s; }
+  .d3 { animation-delay: .27s; }
+  .d4 { animation-delay: .40s; }
+  .d5 { animation-delay: .52s; }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
 
-    .links {
-      margin-top: 50px;
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+  a:focus-visible, .btn-play:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
 
-    .links a {
-      color: var(--muted);
-      text-decoration: none;
-    }
+  @media (max-width: 560px) {
+    .apps { grid-template-columns: 1fr; }
+    .topbar a.ghost { display: none; }
+  }
 
-    .links a:hover {
-      color: var(--text);
-    }
-
-    footer {
-      margin-top: 40px;
-      color: var(--muted);
-      opacity: .6;
-      font-size: .8rem;
-      text-align: center;
-    }
-
-    @media (max-width: 480px) {
-      .apps-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
 </head>
 
 <body>
+<div class="atmosphere" aria-hidden="true"></div>
 
 <div class="page">
 
-  <div class="hero">
-    <div class="eyebrow">Independent App Studio</div>
+  <nav class="topbar reveal d1">
+    <span class="brand"><span class="dot"></span>SufHive</span>
+    <a class="ghost" href="https://github.com/sufian1999" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
 
-```
-<h1>SufHive</h1>
-
-<p class="tagline">
-  Building simple, fast and privacy-focused mobile apps.
-</p>
-```
-
-  </div>
-
-  <div class="apps-grid">
-
-```
-<!-- Merge 5 -->
-
-<div class="app-card">
-
-  <div class="app-header">
-    <div class="app-icon">5</div>
-
-    <div class="app-info">
-      <h2>Merge 5</h2>
-      <p>2048 Number Puzzle</p>
+  <header class="hero">
+    <div class="board reveal d2" aria-hidden="true">
+      <span></span><span></span><span class="lit c1"></span><span></span><span></span>
+      <span></span><span class="lit c2"></span><span></span><span></span><span class="lit c3"></span>
+      <span></span><span></span><span class="lit c4"></span><span></span><span></span>
+      <span class="lit c3"></span><span></span><span></span><span class="lit c1"></span><span></span>
+      <span></span><span></span><span class="lit c2"></span><span></span><span></span>
     </div>
-  </div>
 
-  <div class="chips">
-    <span class="chip">5×5 Board</span>
-    <span class="chip">Daily Challenge</span>
-    <span class="chip">Offline</span>
-  </div>
+    <p class="eyebrow reveal d2">Independent app studio</p>
+    <h1 class="wordmark reveal d3">SufHive</h1>
+    <p class="tagline reveal d3">Small, fast, privacy-minded mobile apps — built by one developer.</p>
+    <p class="meta reveal d4"><b>2 apps</b> · Android · Est. 2026</p>
+  </header>
 
-  <a
-    href="https://play.google.com/store/apps/details?id=com.sufhive.merge5"
-    target="_blank"
-    class="play-btn"
-  >
-    Get it on Google Play
-  </a>
+  <section class="apps" aria-label="Apps">
 
-</div>
+    <article class="card reveal d4">
+      <div class="card-head">
+        <div class="appicon m5">5</div>
+        <div>
+          <div class="card-title">Merge 5</div>
+          <div class="card-sub">2048 Number Puzzle</div>
+        </div>
+      </div>
+      <p class="desc">Merge numbers to 2048 on a bigger 5×5 board. Three grid sizes, a fresh daily challenge, and streaks to chase — fully offline.</p>
+      <div class="chips">
+        <span class="chip">5×5 board</span>
+        <span class="chip">Daily challenge</span>
+        <span class="chip">Offline</span>
+      </div>
+      <div class="cta">
+        <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.sufhive.merge5" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 14 12 3.6 21.7c-.4.2-.9-.1-.9-.6V2.9c0-.5.5-.8.9-.6Z"/><path d="m16.3 9.5 3.6 2c.8.5.8 1.6 0 2l-3.6 2L13 12l3.3-2.5Z"/></svg>
+          Get it on Google Play
+        </a>
+      </div>
+      <div class="card-legal"><a href="merge5/privacy.html">Privacy</a><span>·</span><a href="merge5/terms.html">Terms</a></div>
+    </article>
 
-<!-- GifDrop -->
+    <article class="card reveal d5">
+      <div class="card-head">
+        <div class="appicon gd">
+          <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div>
+          <div class="card-title">GifDrop</div>
+          <div class="card-sub">Video to GIF Maker</div>
+        </div>
+      </div>
+      <p class="desc">Turn any video clip into a shareable GIF in seconds — trim, convert, and export on-device with no watermark.</p>
+      <div class="chips">
+        <span class="chip">No watermark</span>
+        <span class="chip">On-device</span>
+        <span class="chip">Fast export</span>
+      </div>
+      <div class="cta">
+        <span class="btn-soon"><span class="pulse"></span>Coming soon</span>
+      </div>
+      <div class="card-legal"><a href="gifdrop/privacy.html">Privacy</a><span>·</span><a href="gifdrop/terms.html">Terms</a></div>
+    </article>
 
-<div class="app-card">
+  </section>
 
-  <div class="app-header">
-    <div class="app-icon">GIF</div>
-
-    <div class="app-info">
-      <h2>GifDrop</h2>
-      <p>Video to GIF Maker</p>
+  <footer class="foot reveal d5">
+    <div class="foot-row">
+      <a href="https://github.com/sufian1999" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:workplaceyou@gmail.com">Contact</a>
     </div>
-  </div>
-
-  <div class="chips">
-    <span class="chip">No Watermark</span>
-    <span class="chip">Offline</span>
-    <span class="chip">Fast Conversion</span>
-  </div>
-
-  <a
-    href="#"
-    target="_blank"
-    class="play-btn"
-  >
-    Coming Soon
-  </a>
-
-</div>
-```
-
-  </div>
-
-  <div class="links">
-    <a href="https://github.com/sufian1999" target="_blank">
-      GitHub
-    </a>
-
-```
-<a href="mailto:workplaceyou@gmail.com">
-  Contact
-</a>
-```
-
-  </div>
-
-  <footer>
-    © 2026 SufHive · Built by Sufian Ahmad
+    <p class="copyright">© 2026 SufHive · Built by Sufian Ahmad</p>
   </footer>
 
 </div>
-
 </body>
 </html>

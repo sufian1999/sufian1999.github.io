@@ -49,52 +49,40 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ambient atmosphere */
+  /* ambient atmosphere — app-agnostic drifting aurora */
   .atmosphere {
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background:
-      radial-gradient(ellipse 50% 40% at 12% 8%, rgba(58,215,230,0.10), transparent 65%),
-      radial-gradient(ellipse 55% 45% at 88% 92%, rgba(226,94,200,0.10), transparent 65%),
-      radial-gradient(ellipse 60% 50% at 50% 50%, rgba(81,128,240,0.05), transparent 70%);
+    overflow: hidden;
   }
-
-  /* signature: faint living 5x5 board behind the hero */
-  .board {
+  .orb {
     position: absolute;
-    top: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(560px, 86vw);
-    aspect-ratio: 1;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: clamp(8px, 1.6vw, 14px);
-    z-index: 0;
-    opacity: 0.55;
-    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(90px);
   }
-  .board span {
-    border-radius: clamp(6px, 1.4vw, 12px);
-    background: rgba(255,255,255,0.022);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+  .orb.a {
+    width: 52vw; height: 52vw; min-width: 360px; min-height: 360px;
+    background: radial-gradient(circle, rgba(58,215,230,0.20), transparent 68%);
+    top: -14%; left: -8%;
+    animation: drift-a 24s ease-in-out infinite;
   }
-  .board span.lit {
-    background: var(--grad);
-    box-shadow: 0 0 28px 2px rgba(99,140,250,0.35);
-    animation: glow 7s ease-in-out infinite;
+  .orb.b {
+    width: 48vw; height: 48vw; min-width: 320px; min-height: 320px;
+    background: radial-gradient(circle, rgba(226,94,200,0.18), transparent 68%);
+    bottom: -16%; right: -10%;
+    animation: drift-b 30s ease-in-out infinite;
   }
-  .board span.c1 { background: linear-gradient(135deg, var(--cyan), var(--blue)); animation-delay: 0s; }
-  .board span.c2 { background: linear-gradient(135deg, var(--blue), var(--violet)); animation-delay: 1.4s; }
-  .board span.c3 { background: linear-gradient(135deg, var(--violet), var(--magenta)); animation-delay: 2.8s; }
-  .board span.c4 { background: linear-gradient(135deg, var(--cyan), var(--violet)); animation-delay: 4.2s; }
-
-  @keyframes glow {
-    0%, 100% { opacity: 0.32; filter: saturate(0.8); }
-    50%      { opacity: 0.95; filter: saturate(1.2); }
+  .orb.c {
+    width: 42vw; height: 42vw; min-width: 300px; min-height: 300px;
+    background: radial-gradient(circle, rgba(139,92,246,0.14), transparent 70%);
+    top: 30%; left: 52%;
+    animation: drift-c 34s ease-in-out infinite;
   }
+  @keyframes drift-a { 0%,100% { transform: translate(0,0); } 50% { transform: translate(7%, 9%); } }
+  @keyframes drift-b { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-8%, -6%); } }
+  @keyframes drift-c { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-6%, 8%); } }
 
   /* layout shell */
   .page {
@@ -158,11 +146,17 @@
     font-size: clamp(3.6rem, 12vw, 7rem);
     line-height: 0.96;
     letter-spacing: -0.03em;
-    background: var(--grad);
+    background: linear-gradient(110deg, var(--cyan), var(--blue), var(--violet), var(--magenta), var(--cyan));
+    background-size: 240% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+    animation: flow 12s ease-in-out infinite;
+  }
+  @keyframes flow {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
   }
   .tagline {
     margin: 22px auto 0;
@@ -222,22 +216,11 @@
   .appicon {
     width: 64px; height: 64px;
     border-radius: 17px;
-    display: grid;
-    place-items: center;
-    color: #fff;
+    object-fit: cover;
     flex-shrink: 0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+    background: var(--surface-hi);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
   }
-  .appicon.m5 {
-    background: linear-gradient(140deg, var(--cyan) 0%, var(--blue) 45%, var(--violet) 72%, var(--magenta) 100%);
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 2rem;
-  }
-  .appicon.gd {
-    background: linear-gradient(140deg, var(--cyan) 0%, var(--blue) 60%, var(--violet) 100%);
-  }
-  .appicon.gd svg { width: 30px; height: 30px; margin-left: 3px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
 
   .card-title { font-family: var(--display); font-weight: 700; font-size: 1.45rem; letter-spacing: -0.01em; }
   .card-sub { color: var(--muted); font-size: 0.92rem; margin-top: 2px; }
@@ -365,7 +348,11 @@
 </head>
 
 <body>
-<div class="atmosphere" aria-hidden="true"></div>
+<div class="atmosphere" aria-hidden="true">
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+  <div class="orb c"></div>
+</div>
 
 <div class="page">
 
@@ -375,14 +362,6 @@
   </nav>
 
   <header class="hero">
-    <div class="board reveal d2" aria-hidden="true">
-      <span></span><span></span><span class="lit c1"></span><span></span><span></span>
-      <span></span><span class="lit c2"></span><span></span><span></span><span class="lit c3"></span>
-      <span></span><span></span><span class="lit c4"></span><span></span><span></span>
-      <span class="lit c3"></span><span></span><span></span><span class="lit c1"></span><span></span>
-      <span></span><span></span><span class="lit c2"></span><span></span><span></span>
-    </div>
-
     <p class="eyebrow reveal d2">Independent app studio</p>
     <h1 class="wordmark reveal d3">SufHive</h1>
     <p class="tagline reveal d3">Small, fast, privacy-minded mobile apps — built by one developer.</p>
@@ -393,7 +372,7 @@
 
     <article class="card reveal d4">
       <div class="card-head">
-        <div class="appicon m5">5</div>
+        <img class="appicon" src="assets/merge5/app-icon.png" alt="Merge 5 app icon" width="64" height="64" />
         <div>
           <div class="card-title">Merge 5</div>
           <div class="card-sub">2048 Number Puzzle</div>
@@ -416,9 +395,7 @@
 
     <article class="card reveal d5">
       <div class="card-head">
-        <div class="appicon gd">
-          <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+        <img class="appicon" src="assets/gifdrop/app-icon.png" alt="GifDrop app icon" width="64" height="64" />
         <div>
           <div class="card-title">GifDrop</div>
           <div class="card-sub">Video to GIF Maker</div>

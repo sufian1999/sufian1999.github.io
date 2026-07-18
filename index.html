@@ -99,6 +99,13 @@
     justify-content: space-between;
     padding: 8px 0 0;
   }
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    object-fit: contain;
+    display: block;
+  }
   .brand {
     font-family: var(--display);
     font-weight: 800;
@@ -107,11 +114,6 @@
     display: inline-flex;
     align-items: center;
     gap: 9px;
-  }
-  .brand .dot {
-    width: 11px; height: 11px; border-radius: 3px;
-    background: var(--grad);
-    box-shadow: 0 0 12px rgba(99,140,250,0.6);
   }
   .topbar a.ghost {
     font-family: var(--mono);
@@ -357,7 +359,7 @@
 <div class="page">
 
   <nav class="topbar reveal d1">
-    <span class="brand"><span class="dot"></span>SufHive</span>
+    <span class="brand"><img class="brand-logo" src="assets/sufhive/sufhive-logo.png" alt="SufHive logo" width="28" height="28" />SufHive</span>
     <a class="ghost" href="https://github.com/sufian1999" target="_blank" rel="noopener">GitHub ↗</a>
   </nav>
 

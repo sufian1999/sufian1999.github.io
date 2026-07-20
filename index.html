@@ -335,6 +335,14 @@
   .d5 { animation-delay: .52s; }
   @keyframes rise { to { opacity: 1; transform: translateY(0); } }
 
+  .card-link-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    text-decoration: none;
+    color: inherit; /* Keeps your text white/muted instead of turning blue */
+  }
+
   a:focus-visible, .btn-play:focus-visible {
     outline: 2px solid var(--cyan);
     outline-offset: 3px;
@@ -401,7 +409,7 @@
     </article>
 
     <article class="card reveal d5 navigate">
-      <a href="gifdrop/index.html" class="card-link-wrapper">
+      <a href="gifdrop/index.html" class="card-link-wrapper" style="display: block; color: inherit; text-decoration: none;">
         <div class="card-head">
           <img class="appicon" src="assets/gifdrop/app-icon.png" alt="GifDrop app icon" width="64" height="64" />
           <div>

@@ -324,6 +324,8 @@
   .foot .legal a:hover { color: var(--muted); }
   .copyright { font-family: var(--mono); font-size: 0.72rem; color: var(--faint); letter-spacing: 0.04em; }
 
+  .navigate { cursor: pointer; }
+
   /* entrance */
   .reveal { opacity: 0; transform: translateY(18px); animation: rise .9s cubic-bezier(.2,.8,.2,1) forwards; }
   .d1 { animation-delay: .05s; }
@@ -398,20 +400,23 @@
       <div class="card-legal"><a href="merge5/privacy.html">Privacy</a><span>·</span><a href="merge5/terms.html">Terms</a></div>
     </article>
 
-    <article class="card reveal d5">
-      <div class="card-head">
-        <img class="appicon" src="assets/gifdrop/app-icon.png" alt="GifDrop app icon" width="64" height="64" />
-        <div>
-          <div class="card-title">GifDrop</div>
-          <div class="card-sub">Video to GIF Maker</div>
+    <article class="card reveal d5 navigate">
+      <a href="gifdrop/index.html" class="card-link-wrapper" style="display: block; color: inherit; text-decoration: none;">
+        <div class="card-head">
+          <img class="appicon" src="assets/gifdrop/app-icon.png" alt="GifDrop app icon" width="64" height="64" />
+          <div>
+            <div class="card-title">GifDrop</div>
+            <div class="card-sub">Video to GIF Maker</div>
+          </div>
         </div>
-      </div>
-      <p class="desc">Turn any video clip into a shareable GIF in seconds — trim, convert, and export on-device with no watermark.</p>
-      <div class="chips">
-        <span class="chip">No watermark</span>
-        <span class="chip">On-device</span>
-        <span class="chip">Fast export</span>
-      </div>
+        <p class="desc">Turn any video clip into a shareable GIF in seconds — trim, convert, and export on-device with no watermark.</p>
+        <div class="chips">
+          <span class="chip">No watermark</span>
+          <span class="chip">On-device</span>
+          <span class="chip">Fast export</span>
+        </div>
+      </a>
+
       <div class="cta">
         <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.sufhive.gifdrop" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 14 12 3.6 21.7c-.4.2-.9-.1-.9-.6V2.9c0-.5.5-.8.9-.6Z"/><path d="m16.3 9.5 3.6 2c.8.5.8 1.6 0 2l-3.6 2L13 12l3.3-2.5Z"/></svg>

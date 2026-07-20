@@ -359,6 +359,27 @@
     .reveal { opacity: 1; transform: none; }
     html { scroll-behavior: auto; }
   }
+
+  /* Style the title link so it blends flawlessly */
+.main-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The magic trick: Stretches the link to cover the entire card seamlessly */
+.main-card-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Ensure the Google Play button and Legal links sit ABOVE the card link layer */
+/* This ensures they stay fully clickable on their own! */
+.cta, .card-legal {
+  position: relative;
+  z-index: 2;
+}
 </style>
 </head>
 
@@ -409,22 +430,20 @@
     </article>
 
     <article class="card reveal d5 navigate">
-      <a href="gifdrop/index.html" class="card-link-wrapper" style="display: block; color: inherit; text-decoration: none;">
-        <div class="card-head">
-          <img class="appicon" src="assets/gifdrop/app-icon.png" alt="GifDrop app icon" width="64" height="64" />
-          <div>
-            <div class="card-title">GifDrop</div>
-            <div class="card-sub">Video to GIF Maker</div>
-          </div>
+      <div class="card-head">
+        <img class="appicon" src="assets/gifdrop/app-icon.png" alt="GifDrop app icon" width="64" height="64" />
+        <div>
+          <!-- The main card link sits here, but it will stretch to fill the whole card visually -->
+          <div class="card-title"><a href="gifdrop/index.html" class="main-card-link">GifDrop</a></div>
+          <div class="card-sub">Video to GIF Maker</div>
         </div>
-        <p class="desc">Turn any video clip into a shareable GIF in seconds — trim, convert, and export on-device with no watermark.</p>
-        <div class="chips">
-          <span class="chip">No watermark</span>
-          <span class="chip">On-device</span>
-          <span class="chip">Fast export</span>
-        </div>
-      </a>
-
+      </div>
+      <p class="desc">Turn any video clip into a shareable GIF in seconds — trim, convert, and export on-device with no watermark.</p>
+      <div class="chips">
+        <span class="chip">No watermark</span>
+        <span class="chip">On-device</span>
+        <span class="chip">Fast export</span>
+      </div>
       <div class="cta">
         <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.sufhive.gifdrop" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 14 12 3.6 21.7c-.4.2-.9-.1-.9-.6V2.9c0-.5.5-.8.9-.6Z"/><path d="m16.3 9.5 3.6 2c.8.5.8 1.6 0 2l-3.6 2L13 12l3.3-2.5Z"/></svg>

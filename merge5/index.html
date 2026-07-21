@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Merge 5 — 5×5 Number Puzzle · SufHive</title>
+<meta name="description" content="Merge 5 takes the classic 2048 mechanic to a bigger board — longer runs, more merges, and a fresh daily challenge. Free, offline, Android. By SufHive." />
+<meta name="theme-color" content="#05060f" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Merge 5 — 5×5 Number Puzzle" />
+<meta property="og:description" content="Slide, merge, chase 2048 on a bigger board. Daily challenge, themes, leaderboards. Free & offline." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="../assets/merge5/og-image.png" />
+
+<!-- Favicon (shared SufHive icon) -->
+<link rel="icon" type="image/png" href="../assets/sufhive/favicon-16.png" />
+<link rel="icon" type="image/png" href="../assets/sufhive/favicon-32.png" />
+<link rel="apple-touch-icon" href="../assets/sufhive/apple-touch-icon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --void: #05060f;
+    --deep: #06071c;
+    --surface: #0f1238;
+    --surface-hi: #161a4c;
+    --line: rgba(255,255,255,0.08);
+    --line-hi: rgba(120,150,255,0.28);
+
+    --cyan: #3ad7e6;
+    --blue: #5180f0;
+    --violet: #8b5cf6;
+    --magenta: #e25ec8;
+
+    --text: #e7eaff;
+    --muted: #8b94cc;
+    --faint: #5b628f;
+
+    --grad: linear-gradient(135deg, var(--cyan) 0%, var(--blue) 38%, var(--violet) 70%, var(--magenta) 100%);
+    --display: 'Bricolage Grotesque', 'Sora', system-ui, sans-serif;
+    --body: 'DM Sans', system-ui, sans-serif;
+    --mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background: var(--void);
+    color: var(--text);
+    font-family: var(--body);
+    line-height: 1.55;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ambient atmosphere — same drifting aurora as the studio site */
+  .atmosphere { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(90px); }
+  .orb.a {
+    width: 52vw; height: 52vw; min-width: 360px; min-height: 360px;
+    background: radial-gradient(circle, rgba(58,215,230,0.20), transparent 68%);
+    top: -14%; left: -8%; animation: drift-a 24s ease-in-out infinite;
+  }
+  .orb.b {
+    width: 48vw; height: 48vw; min-width: 320px; min-height: 320px;
+    background: radial-gradient(circle, rgba(226,94,200,0.18), transparent 68%);
+    bottom: -16%; right: -10%; animation: drift-b 30s ease-in-out infinite;
+  }
+  .orb.c {
+    width: 42vw; height: 42vw; min-width: 300px; min-height: 300px;
+    background: radial-gradient(circle, rgba(139,92,246,0.14), transparent 70%);
+    top: 40%; left: 52%; animation: drift-c 34s ease-in-out infinite;
+  }
+  @keyframes drift-a { 0%,100% { transform: translate(0,0); } 50% { transform: translate(7%, 9%); } }
+  @keyframes drift-b { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-8%, -6%); } }
+  @keyframes drift-c { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-6%, 8%); } }
+
+  .page { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 24px clamp(20px, 5vw, 40px) 56px; }
+
+  /* topbar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 0; }
+  .brand { font-family: var(--display); font-weight: 800; font-size: 1.15rem; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--text); }
+  .brand-logo { width: 28px; height: 28px; border-radius: 7px; object-fit: contain; display: block; }
+  .topbar a.ghost {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em; color: var(--muted);
+    text-decoration: none; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px;
+    transition: color .2s, border-color .2s;
+  }
+  .topbar a.ghost:hover { color: var(--text); border-color: var(--line-hi); }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(28px, 5vw, 60px); align-items: center; padding: clamp(48px, 9vw, 96px) 0 clamp(40px, 7vw, 76px); }
+  .hero-icon { width: 76px; height: 76px; border-radius: 20px; object-fit: cover; box-shadow: 0 14px 40px rgba(0,0,0,0.5); margin-bottom: 26px; background: var(--surface-hi); }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--cyan); margin-bottom: 18px; }
+  .h1 {
+    font-family: var(--display); font-weight: 800; font-size: clamp(2.6rem, 7vw, 4.4rem); line-height: 1.0; letter-spacing: -0.03em;
+  }
+  .h1 .grad {
+    background: linear-gradient(110deg, var(--cyan), var(--blue), var(--violet), var(--magenta), var(--cyan));
+    background-size: 240% 100%;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+    animation: flow 12s ease-in-out infinite;
+  }
+  @keyframes flow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  .lede { margin-top: 22px; color: var(--muted); font-size: clamp(1.02rem, 2.2vw, 1.2rem); font-weight: 300; max-width: 44ch; }
+  .hero-cta { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .no-nos { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .no-no {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.02em; color: var(--muted);
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,0.02);
+  }
+
+  /* phone frame in hero */
+  .hero-media { display: flex; justify-content: center; }
+  .phone {
+    position: relative; width: min(280px, 78vw); aspect-ratio: 9 / 19.5;
+    border-radius: 34px; padding: 10px;
+    background: linear-gradient(160deg, #1a1e42, #0a0c20);
+    border: 1px solid var(--line-hi);
+    box-shadow: 0 40px 90px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .phone-screen {
+    width: 100%; height: 100%; border-radius: 26px; overflow: hidden;
+    background: var(--deep); display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  /* Hero Phone Screen Image Fix */
+.phone-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Prevents cropping top/bottom text */
+  border-radius: 18px; /* Slightly matches the inner bezel */
+  display: block;
+}
+  /* placeholder look when no image present */
+  .ph {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    color: var(--faint); font-family: var(--mono); font-size: 0.72rem; text-align: center; padding: 20px;
+    background:
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 12px, transparent 12px 24px),
+      var(--deep);
+  }
+  .ph .hex { width: 34px; height: 34px; border-radius: 9px; background: var(--grad); opacity: .5; }
+
+  /* buttons */
+  .btn-play {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
+    color: #06071c; font-family: var(--body); font-weight: 500; font-size: 1rem;
+    padding: 15px 26px; border-radius: 15px; background: var(--grad);
+    transition: filter .25s, transform .25s;
+  }
+  .btn-play:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-play svg { width: 18px; height: 18px; }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.03em; color: var(--muted);
+    padding: 14px 20px; border-radius: 14px; border: 1px solid var(--line); transition: color .2s, border-color .2s;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--line-hi); }
+
+  /* section scaffolding */
+  .section { padding: clamp(44px, 8vw, 84px) 0; }
+  .section-eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px; text-align: center; }
+  .section-title { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 4.4vw, 2.6rem); letter-spacing: -0.02em; text-align: center; line-height: 1.1; }
+  .section-sub { text-align: center; color: var(--muted); font-weight: 300; max-width: 52ch; margin: 16px auto 0; font-size: 1.02rem; }
+
+  /* feature grid */
+  .features { margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+  .feature {
+    position: relative; background: linear-gradient(180deg, var(--surface) 0%, var(--deep) 100%);
+    border: 1px solid var(--line); border-radius: 22px; padding: 26px 24px; overflow: hidden;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s;
+  }
+  .feature:hover { transform: translateY(-5px); border-color: var(--line-hi); }
+  .feature .fi { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; background: rgba(58,215,230,0.08); border: 1px solid rgba(58,215,230,0.2); }
+  .feature .fi svg { width: 22px; height: 22px; stroke: var(--cyan); fill: none; stroke-width: 1.8; }
+  .feature h3 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .feature p { color: var(--muted); font-size: 0.92rem; font-weight: 300; }
+
+  /* screenshot gallery */
+  .shots { margin-top: 48px; display: flex; gap: 18px; overflow-x: auto; padding: 8px 4px 20px; scroll-snap-type: x mandatory; }
+ .shot {
+  flex: 0 0 auto;
+  width: 220px;
+  aspect-ratio: 9 / 19.5;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--deep);
+  scroll-snap-align: center;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+
+.shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensures complete promotional image text/graphic is visible */
+  background: var(--deep);
+}
+
+  /* how it works */
+  .steps { margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; counter-reset: step; }
+  .step { position: relative; padding: 26px 22px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,0.015); }
+  .step .n { font-family: var(--mono); font-weight: 700; font-size: 0.82rem; color: var(--cyan); letter-spacing: 0.1em; }
+  .step h3 { font-family: var(--display); font-weight: 700; font-size: 1.1rem; margin: 10px 0 6px; }
+  .step p { color: var(--muted); font-size: 0.9rem; font-weight: 300; }
+
+  /* video */
+  .video-wrap { margin-top: 44px; max-width: 760px; margin-left: auto; margin-right: auto; }
+  .video-frame {
+    position: relative; aspect-ratio: 16 / 9; border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--line-hi); box-shadow: 0 30px 70px rgba(0,0,0,0.5); background: var(--deep);
+  }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  /* placeholder shown until a real embed is dropped in */
+  .video-frame .ph { border-radius: 0; }
+
+  /* premium band */
+  .premium { margin-top: 8px; }
+  .premium-card {
+    position: relative; border-radius: 26px; padding: clamp(30px, 5vw, 48px);
+    background: linear-gradient(180deg, var(--surface) 0%, var(--deep) 100%);
+    border: 1px solid var(--line); overflow: hidden;
+  }
+  .premium-card::before {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: var(--grad);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.5; pointer-events: none;
+  }
+  .premium-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .premium-price { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 5vw, 2.8rem); letter-spacing: -0.02em; }
+  .premium-price span { font-size: 1rem; color: var(--muted); font-weight: 400; font-family: var(--body); }
+  .premium-tag { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.05em; color: var(--cyan); padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(58,215,230,0.25); background: rgba(58,215,230,0.06); }
+  .premium-list { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 24px; }
+  .premium-list li { list-style: none; color: var(--muted); font-size: 0.95rem; font-weight: 300; display: flex; gap: 10px; align-items: flex-start; }
+  .premium-list li svg { width: 18px; height: 18px; stroke: var(--cyan); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 2px; }
+  .premium-note { margin-top: 22px; font-family: var(--mono); font-size: 0.74rem; color: var(--faint); letter-spacing: 0.03em; }
+
+  /* final CTA */
+  .final { text-align: center; padding: clamp(48px, 9vw, 96px) 0 clamp(20px, 4vw, 40px); }
+  .final h2 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 5.5vw, 3.2rem); letter-spacing: -0.02em; line-height: 1.05; }
+  .final p { color: var(--muted); font-weight: 300; margin: 18px auto 30px; max-width: 40ch; font-size: 1.05rem; }
+  .formats { margin-top: 26px; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.06em; color: var(--faint); }
+
+  /* footer */
+  .foot { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+  .foot-row { display: flex; flex-wrap: wrap; gap: 20px 26px; justify-content: center; }
+  .foot a { color: var(--muted); text-decoration: none; font-size: 0.86rem; transition: color .2s; }
+  .foot a:hover { color: var(--text); }
+  .copyright { font-family: var(--mono); font-size: 0.72rem; color: var(--faint); letter-spacing: 0.04em; }
+
+  /* entrance */
+  .reveal { opacity: 0; transform: translateY(18px); animation: rise .9s cubic-bezier(.2,.8,.2,1) forwards; }
+  .d1 { animation-delay: .05s; } .d2 { animation-delay: .16s; } .d3 { animation-delay: .27s; } .d4 { animation-delay: .40s; }
+
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  a:focus-visible, .btn-play:focus-visible, .btn-ghost:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 8px; }
+
+  @media (max-width: 840px) {
+    .hero { grid-template-columns: 1fr; text-align: center; }
+    .hero-icon { margin-left: auto; margin-right: auto; }
+    .lede { margin-left: auto; margin-right: auto; }
+    .hero-cta, .no-nos { justify-content: center; }
+    .hero-media { order: -1; }
+  }
+  @media (max-width: 560px) {
+    .topbar a.ghost { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+
+<body>
+<div class="atmosphere" aria-hidden="true">
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+  <div class="orb c"></div>
+</div>
+
+<div class="page">
+
+  <nav class="topbar reveal d1">
+    <a class="brand" href="../index.html">
+      <img class="brand-logo" src="../assets/sufhive/sufhive-logo.png" alt="SufHive logo" width="28" height="28" />
+      SufHive
+    </a>
+    <a class="ghost" href="https://play.google.com/store/apps/details?id=com.sufhive.merge5" target="_blank" rel="noopener">Google Play ↗</a>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <img class="hero-icon reveal d1" src="../assets/merge5/app-icon.png" alt="Merge 5 app icon" width="76" height="76" />
+      <p class="eyebrow reveal d2">5×5 Number Puzzle · Android</p>
+      <h1 class="h1 reveal d2">Slide, merge, chase <span class="grad">2048</span>.</h1>
+      <p class="lede reveal d3">Merge 5 takes the classic 2048 mechanic to a bigger board — longer runs, more merges, and a fresh challenge every day. Free, offline, no account.</p>
+      <div class="hero-cta reveal d3">
+        <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.sufhive.merge5" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 14 12 3.6 21.7c-.4.2-.9-.1-.9-.6V2.9c0-.5.5-.8.9-.6Z"/><path d="m16.3 9.5 3.6 2c.8.5.8 1.6 0 2l-3.6 2L13 12l3.3-2.5Z"/></svg>
+          Get it on Google Play
+        </a>
+        <a class="btn-ghost" href="#screens">See the modes</a>
+      </div>
+      <div class="no-nos reveal d4">
+        <span class="no-no">Free to play</span>
+        <span class="no-no">Works offline</span>
+        <span class="no-no">No account</span>
+        <span class="no-no">Daily challenge</span>
+      </div>
+    </div>
+
+    <div class="hero-media reveal d3">
+      <div class="phone">
+        <div class="phone-screen">
+          <!-- Replace src with your hero screenshot; the .ph placeholder shows until then -->
+          <img src="../assets/merge5/shots/Keep Going.png" alt="Merge 5 — a 5×5 board mid-run" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <p class="section-eyebrow">Why Merge 5</p>
+    <h2 class="section-title">More board. More merges.</h2>
+    <p class="section-sub">Everything you'd expect from 2048 — plus grid sizes, a daily challenge, themes, and Play Games sync.</p>
+
+    <div class="features">
+      <div class="feature reveal d1">
+        <div class="fi"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <h3>Three grid sizes</h3>
+        <p>4×4 Classic, 5×5 Standard, and 6×6 Hard. Same engine, longer runs — pick your pace.</p>
+      </div>
+      <div class="feature reveal d1">
+        <div class="fi"><svg viewBox="0 0 24 24"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg></div>
+        <h3>Daily challenge</h3>
+        <p>One seeded board for every player, every day. Build a streak and keep coming back.</p>
+      </div>
+      <div class="feature reveal d2">
+        <div class="fi"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-.9 2-2 0-1-.7-1.5-.7-2.3 0-.7.6-1.2 1.4-1.2H17a4 4 0 0 0 4-4c0-4.4-4-8.3-9-8.3Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="11" cy="7.5" r="1"/><circle cx="15.5" cy="9" r="1"/></svg></div>
+        <h3>Theme packs</h3>
+        <p>Galaxy, Classic, Midnight, and Candy. All free — swap the whole board's look in a tap.</p>
+      </div>
+      <div class="feature reveal d2">
+        <div class="fi"><svg viewBox="0 0 24 24"><path d="M7 4h10v3a5 5 0 0 1-10 0V4Z"/><path d="M17 5h2a2 2 0 0 1-2 3M7 5H5a2 2 0 0 0 2 3"/><path d="M9 14h6M10 14v3M14 14v3M8 20h8"/></svg></div>
+        <h3>Leaderboards &amp; achievements</h3>
+        <p>Google Play Games leaderboard plus 24 achievements to chase across streaks, tiles, and scores.</p>
+      </div>
+      <div class="feature reveal d3">
+        <div class="fi"><svg viewBox="0 0 24 24"><path d="M17 10a4 4 0 0 0-.7-7.9A6 6 0 0 0 5 6a4.5 4.5 0 0 0-1 8.9"/><path d="M8 17l4 4 4-4M12 12v9"/></svg></div>
+        <h3>Cloud save</h3>
+        <p>Streaks and best scores sync through Play Games — switch phones without losing progress.</p>
+      </div>
+      <div class="feature reveal d3">
+        <div class="fi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></div>
+        <h3>Free &amp; offline</h3>
+        <p>Play anywhere with no connection. Non-intrusive ads keep the whole game free.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREENSHOTS -->
+  <section class="section" id="screens">
+    <p class="section-eyebrow">A look inside</p>
+    <h2 class="section-title">See it in action</h2>
+    <p class="section-sub">From your last run to a fresh daily board — the whole loop, one swipe at a time.</p>
+
+    <div class="shots">
+      <!-- Paste your Play Store screenshots at these paths (portrait). Add or remove .shot blocks to match how many you have. -->
+      <div class="shot"><img src="../assets/merge5/shots/Daily Challenge.png" style="width: 100%; height: 100%;" alt="Merge 5 — home / mode select" onerror="this.parentElement.innerHTML='<div class=&quot;ph&quot;><div class=&quot;hex&quot;></div>assets/merge5/shots/Home.png</div>';" /></div>
+      <div class="shot"><img src="../assets/merge5/shots/Achievements.png" alt="Merge 5 — game board" onerror="this.parentElement.innerHTML='<div class=&quot;ph&quot;><div class=&quot;hex&quot;></div>assets/merge5/shots/Game.png</div>';" /></div>
+      <div class="shot"><img src="../assets/merge5/shots/Free Themes.png" alt="Merge 5 — theme packs" onerror="this.parentElement.innerHTML='<div class=&quot;ph&quot;><div class=&quot;hex&quot;></div>assets/merge5/shots/Themes.png</div>';" /></div>
+      <div class="shot"><img src="../assets/merge5/shots/Modes.png" alt="Merge 5 — daily challenge" onerror="this.parentElement.innerHTML='<div class=&quot;ph&quot;><div class=&quot;hex&quot;></div>assets/merge5/shots/Daily.png</div>';" /></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-title">One rule. Endless runs.</h2>
+
+    <div class="steps">
+      <div class="step reveal d1"><div class="n">STEP 01</div><h3>Swipe to merge</h3><p>Slide every tile in one direction. Two equal numbers that collide combine into one that's double.</p></div>
+      <div class="step reveal d2"><div class="n">STEP 02</div><h3>Hit the target</h3><p>Reach the 2048 tile — or 8192 on 6×6 Hard — to clear the board's goal and bank the win.</p></div>
+      <div class="step reveal d3"><div class="n">STEP 03</div><h3>Keep going</h3><p>Push past the target for a higher score, then take your best to the daily leaderboard.</p></div>
+    </div>
+  </section>
+
+  <!-- DEMO VIDEO -->
+  <section class="section" id="demo">
+    <p class="section-eyebrow">Demo</p>
+    <h2 class="section-title">Watch a run come together</h2>
+    <div class="video-wrap reveal d1">
+      <div class="video-frame">
+        <!-- Replace VIDEO_ID with your Merge 5 demo. Until then the placeholder shows. -->
+        <div class="ph"><div class="hex"></div>Drop your YouTube embed here<br>(replace VIDEO_ID)</div>
+        
+        <iframe
+          src="https://www.youtube.com/embed/OySjSPQdLtU"
+          title="Merge 5 demo — a 5x5 run to 2048"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+       
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAY FREE (same premium-card styling; Merge 5 is free / ad-supported, no IAP) -->
+  <section class="section premium" id="premium">
+    <div class="premium-card reveal d1">
+      <div class="premium-head">
+        <span class="premium-price">Free <span>to play</span></span>
+        <span class="premium-tag">No paywall, ever</span>
+      </div>
+      <ul class="premium-list">
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>All three grid sizes — 4×4, 5×5, 6×6</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Daily challenge with streak tracking</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Every theme pack — no unlocks to buy</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Leaderboard &amp; 23 achievements</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Cloud save across devices</li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Fully playable offline</li>
+      </ul>
+      <p class="premium-note">Ad-supported. No forced sign-in. No data leaves your device for gameplay.</p>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final">
+    <h2>Start your first run today.</h2>
+    <p>Free to play. On-device. Available now on Google Play.</p>
+    <a class="btn-play" href="https://play.google.com/store/apps/details?id=com.sufhive.merge5" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 14 12 3.6 21.7c-.4.2-.9-.1-.9-.6V2.9c0-.5.5-.8.9-.6Z"/><path d="m16.3 9.5 3.6 2c.8.5.8 1.6 0 2l-3.6 2L13 12l3.3-2.5Z"/></svg>
+      Get it on Google Play
+    </a>
+    <p class="formats">Modes · 4×4 · 5×5 · 6×6 · Daily Challenge</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="foot">
+    <div class="foot-row">
+      <a href="../index.html">SufHive</a>
+      <a href="./privacy.html">Privacy</a>
+      <a href="./terms.html">Terms</a>
+      <a href="mailto:sufhive@gmail.com">Contact</a>
+    </div>
+    <p class="copyright">© 2026 SufHive · Built by Sufian Ahmad</p>
+  </footer>
+
+</div>
+</body>
+</html>
